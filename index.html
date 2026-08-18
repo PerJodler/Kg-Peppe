@@ -27,13 +27,17 @@ button,input,textarea{font:inherit}
 .page{display:none;padding:8px 18px 20px}
 .page.active{display:block}
 .header{display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 18px}
-.today-spacer{height:64px}
+.today-spacer{height:32px}
 h1{font-size:24px;margin:0 0 4px;letter-spacing:-.5px}
 h2{font-size:18px;margin:0}
 .sub{font-size:14px;color:var(--muted)}
 .iconbtn{border:0;background:transparent;color:var(--text);font-size:22px;padding:4px;cursor:pointer}
 .card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
 .hero{background:linear-gradient(135deg,var(--green2),#008c67);color:#fff;border:0;position:relative;overflow:hidden}
+.goal-card{background:linear-gradient(135deg,var(--green2),#008c67);color:#fff;border:0}
+.goal-card .micro{color:rgba(255,255,255,.92)}
+.goal-card .progress{background:rgba(255,255,255,.28)}
+.goal-card .progress>i{background:#fff}
 .hero .label{font-size:13px;font-weight:700}
 .hero .weight{font-size:42px;font-weight:800;letter-spacing:-1.4px;margin:7px 0 2px}
 .hero .weight small{font-size:17px}
@@ -170,7 +174,7 @@ h2{font-size:18px;margin:0}
       </div>
     </div>
 
-    <div class="card">
+    <div class="card goal-card">
       <div class="row"><b style="font-size:13px">Idealziel</b><b style="font-size:13px"><span id="goalWeight">78,0</span> kg</b></div>
       <div class="progress"><i id="goalProgress" style="width:55%"></i></div>
       <div class="row micro"><span>Noch <span id="remaining">4,4</span> kg bis zum Ziel</span><span id="goalPct">55 %</span></div>
