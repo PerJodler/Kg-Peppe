@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#242628">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Kg – Gewicht Tracker</title>
+<title>Kg – Gewicht Tracker V7</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-title" content="Kg">
@@ -175,7 +175,9 @@ h2{font-size:18px;margin:0}
     </div>
 
     <div class="card">
-      <div class="row"><div><div class="metric-title">7-Tage-Durchschnitt</div><div class="metric-value"><span id="avg7">82,7</span> <small>kg</small></div></div><div class="green" style="text-align:right;font-weight:750"><span id="trend7">↓ 0,4 kg</span><div class="micro">seit 7 Tagen</div></div></div>
+      <div class="metric-title">7-Tage-Veränderung</div>
+      <div class="metric-value"><span id="trend7">---</span></div>
+      <div class="micro" style="margin-top:4px">Differenz innerhalb der letzten 7 Einträge</div>
     </div>
     <div class="card">
       <div class="row"><b>Wochenbericht</b><span class="micro">letzte 7 Einträge</span></div>
@@ -217,10 +219,23 @@ h2{font-size:18px;margin:0}
     <div class="card">
       <div class="settings-row"><span>Zielgewicht</span><div><input id="goalInput" inputmode="decimal" value="78,0"> kg</div></div>
       <div class="settings-row"><span>Startgewicht</span><div><input id="startInput" inputmode="decimal" value="84,2"> kg</div></div>
-      <div class="settings-row"><span>Daten exportieren</span><button class="secondary" style="width:auto;padding:8px 12px" onclick="exportData()">JSON</button></div>
+      <div class="settings-row"><span>Backup als Datei</span><button class="secondary" style="width:auto;padding:8px 12px" onclick="exportData()">Export</button></div>
+      <div class="settings-row"><span>Backup-Datei laden</span><button class="secondary" style="width:auto;padding:8px 12px" onclick="backupFileInput.click()">Import</button></div>
       <div class="settings-row"><span>Alle lokalen Daten löschen</span><button class="secondary" style="width:auto;padding:8px 12px;color:#ff756d" onclick="resetData()">Löschen</button></div>
     </div>
     <button class="primary" onclick="saveSettings()">Einstellungen speichern</button>
+
+
+    <div class="card">
+      <div class="row"><b>Handy-Wechsel / Komplett-Backup</b><span class="micro">alle App-Daten</span></div>
+      <p class="report-note">Auf dem alten Handy „Backup kopieren“, auf dem neuen Handy den Text unten einfügen und „Backup laden“ drücken.</p>
+      <button class="secondary" onclick="copyBackup()">Backup kopieren</button>
+      <div class="field">
+        <label>Backup einfügen</label>
+        <textarea id="backupText" style="min-height:105px" placeholder="Backup-Text hier einfügen …"></textarea>
+      </div>
+      <button class="primary" onclick="importBackupText()">Backup laden</button>
+    </div>
 
     <div class="card">
       <div class="row"><b>Zwischenziel</b><span class="micro">optional</span></div>
@@ -230,6 +245,10 @@ h2{font-size:18px;margin:0}
         <button class="secondary" onclick="clearMilestone()">Entfernen</button>
         <button class="primary" style="width:58%" onclick="saveMilestone()">Speichern</button>
       </div>
+    </div>
+
+    <div style="text-align:center;color:#aeb4b8;font-size:11px;line-height:1.5;padding:10px 12px 4px">
+      Copyright © 2026 Peppe Mobilia.<br>Alle Rechte vorbehalten.
     </div>
   </section>
 
@@ -261,10 +280,11 @@ h2{font-size:18px;margin:0}
 </div>
 
 <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
+<input id="backupFileInput" type="file" accept="application/json,.json" hidden>
 <div class="toast" id="toast"></div>
 
 <script>
-const KEY='gewichtTrackerV6Milestone';
+const KEY='gewichtTrackerV7Backup';
 const DEFAULT={
  goal:78,start:84.2,
  entries:[],
@@ -349,35 +369,33 @@ function renderDashboard(){
  if(!l){
    currentWeight.textContent='---';
    dayDelta.textContent='↓ ---';
-   avg7.textContent='---';
    trend7.textContent='---';
    goalWeight.textContent=fmt(state.goal);
    remaining.textContent='---';
-   remaining2.textContent='---';
    goalPct.textContent='0 %';
    goalProgress.style.width='0%';
-   lost30.textContent='0,0 kg';
    return;
  }
 
  currentWeight.textContent=fmt(l.weight);
  let dd=p?l.weight-p.weight:0;
  dayDelta.textContent=`${changeSign(dd)} ${fmt(Math.abs(dd))} kg`;
- let last7=a.slice(-7).map(x=>x.weight), avg=mean(last7);
- avg7.textContent=fmt(avg);
- let weekDelta=a.length>1 ? l.weight-a[Math.max(0,a.length-7)].weight : 0;
- trend7.textContent=`${changeSign(weekDelta)} ${fmt(Math.abs(weekDelta))} kg`;
- goalWeight.textContent=fmt(state.goal);
- let rem=Math.max(0,l.weight-state.goal), total=Math.max(.1,state.start-state.goal), done=Math.max(0,state.start-l.weight);
- let pct=Math.max(0,Math.min(100,done/total*100));
- remaining.textContent=fmt(rem);remaining2.textContent=fmt(rem);
- goalPct.textContent=Math.round(pct)+' %';goalProgress.style.width=pct+'%';
- let cutoff=new Date(l.date+'T12:00:00');cutoff.setDate(cutoff.getDate()-30);
- let base=a.find(x=>new Date(x.date+'T12:00:00')>=cutoff) || a[0];
- let d30=l.weight-base.weight;
- lost30.textContent=(d30>0?'+':'')+fmt(d30)+' kg';
-}
 
+ // Only show the difference across the latest 7 entries.
+ let recent=a.slice(-7);
+ let weekDelta=recent.length>1 ? recent[recent.length-1].weight-recent[0].weight : 0;
+ trend7.textContent=`${changeSign(weekDelta)} ${weekDelta>0?'+':''}${fmt(weekDelta)} kg`;
+ trend7.className=colorClass(weekDelta);
+
+ goalWeight.textContent=fmt(state.goal);
+ let rem=Math.max(0,l.weight-state.goal);
+ let total=Math.max(.1,state.start-state.goal);
+ let done=Math.max(0,state.start-l.weight);
+ let pct=Math.max(0,Math.min(100,done/total*100));
+ remaining.textContent=fmt(rem);
+ goalPct.textContent=Math.round(pct)+' %';
+ goalProgress.style.width=pct+'%';
+}
 function calcStreak(a){
  if(!a.length)return 0;
  let dates=[...new Set(a.map(x=>x.date))].sort().reverse(), streak=1;
@@ -406,6 +424,10 @@ function buildCalendarHTML(y,m,interactive=true){
  return html;
 }
 function renderHomeCalendar(){
+ if(!Number.isInteger(state.homeCalYear)||!Number.isInteger(state.homeCalMonth)){
+   state.homeCalYear=new Date().getFullYear();
+   state.homeCalMonth=new Date().getMonth();
+ }
  homeCalTitle.textContent=monthLabel(state.homeCalYear,state.homeCalMonth);
  homeCalendar.innerHTML=buildCalendarHTML(state.homeCalYear,state.homeCalMonth,true);
 }
@@ -492,11 +514,19 @@ photoInput.onchange=e=>{
 function removePhoto(i){if(confirm('Dieses Fortschrittsfoto löschen?')){state.photos.splice(i,1);persist();renderPhotos()}}
 
 function renderWeekly(){
+ let box=document.getElementById('weeklyReport');
+ if(!box)return;
  let a=sorted().slice(-7);
- if(!a.length){weeklyReport.innerHTML='<div class="emptymsg">Noch nicht genug Daten.</div>';return}
- let avg=mean(a.map(x=>x.weight)), change=a[a.length-1].weight-a[0].weight, days=new Set(a.map(x=>x.date)).size;
- let note=change<-.2?'Dein Trend zeigt in die gewünschte Richtung. Tägliche Schwankungen sind normal.':change>.2?'Diese Woche liegt der Trend etwas höher. Beobachte vor allem den Durchschnitt.':'Dein Gewicht war diese Woche relativ stabil.';
- weeklyReport.innerHTML=`<div class="report-grid">
+ if(!a.length){box.innerHTML='<div class="emptymsg">Noch nicht genug Daten.</div>';return}
+ let avg=mean(a.map(x=>x.weight));
+ let change=a[a.length-1].weight-a[0].weight;
+ let days=new Set(a.map(x=>x.date)).size;
+ let note=change<-.2
+   ?'Dein Trend zeigt in die gewünschte Richtung. Tägliche Schwankungen sind normal.'
+   :change>.2
+     ?'Diese Woche liegt der Trend etwas höher. Beobachte vor allem den Durchschnitt.'
+     :'Dein Gewicht war diese Woche relativ stabil.';
+ box.innerHTML=`<div class="report-grid">
   <div class="report-metric"><span class="micro">Ø Gewicht</span><b>${fmt(avg)} kg</b></div>
   <div class="report-metric"><span class="micro">Veränderung</span><b class="${colorClass(change)}">${change>0?'+':''}${fmt(change)} kg</b></div>
   <div class="report-metric"><span class="micro">Wiegetage</span><b>${days}/7</b></div>
@@ -515,8 +545,6 @@ function saveMilestone(){
  let d=milestoneDate.value,w=parseNum(milestoneWeight.value);
  if(!d||!isFinite(w)||w<20||w>400){showToast('Bitte Datum und gültiges Zwischenziel eingeben');return}
  state.milestone={date:d,weight:w};
- let dt=new Date(d+'T12:00:00');
- state.homeCalYear=dt.getFullYear();state.homeCalMonth=dt.getMonth();
  persist();renderAll();showToast('Zwischenziel gespeichert');
 }
 function clearMilestone(){
@@ -524,13 +552,86 @@ function clearMilestone(){
  persist();renderAll();showToast('Zwischenziel entfernt');
 }
 function saveSettings(){
- let g=parseNum(goalInput.value),s=parseNum(startInput.value);
- if(!isFinite(g)||!isFinite(s)||g<=0||s<=0||Math.abs(s-g)<0.1){showToast('Bitte gültige Werte eingeben');return}
- state.goal=g;state.start=s;persist();renderAll();showToast('Einstellungen gespeichert');
+ const gEl=document.getElementById('goalInput');
+ const sEl=document.getElementById('startInput');
+ let g=parseNum(gEl.value),s=parseNum(sEl.value);
+ if(!isFinite(g)||g<20||g>400){showToast('Bitte gültiges Idealziel eingeben');return}
+ if(!isFinite(s)||s<20||s>400){showToast('Bitte gültiges Startgewicht eingeben');return}
+ if(Math.abs(s-g)<0.1){showToast('Startgewicht und Idealziel müssen unterschiedlich sein');return}
+ state.goal=g;
+ state.start=s;
+ persist();
+ renderAll();
+ showToast('Einstellungen gespeichert ✓');
+}
+function backupPayload(){
+ return {
+   app:'Kg – Gewicht Tracker',
+   version:7,
+   exportedAt:new Date().toISOString(),
+   data:clone(state)
+ };
 }
 function exportData(){
- let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');
- a.href=URL.createObjectURL(blob);a.download='gewicht-tracker-daten.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+ try{
+   let payload=backupPayload();
+   let blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+   let url=URL.createObjectURL(blob);
+   let a=document.createElement('a');
+   a.href=url;
+   a.download='kg-gewicht-tracker-komplett-backup.json';
+   document.body.appendChild(a);
+   a.click();
+   a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),1000);
+   showToast('Backup-Datei erstellt ✓');
+ }catch(e){showToast('Export fehlgeschlagen')}
+}
+function normalizeImported(obj){
+ let incoming=(obj&&obj.data)?obj.data:obj;
+ if(!incoming || !Array.isArray(incoming.entries))throw new Error('Ungültiges Backup');
+ let merged=Object.assign(clone(DEFAULT),incoming);
+ if(!merged.milestone)merged.milestone={date:'',weight:null};
+ return merged;
+}
+async function copyBackup(){
+ let text=JSON.stringify(backupPayload());
+ try{
+   if(navigator.clipboard && navigator.clipboard.writeText){
+     await navigator.clipboard.writeText(text);
+   }else{
+     let ta=document.createElement('textarea');
+     ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+   }
+   showToast('Komplettes Backup kopiert ✓');
+ }catch(e){
+   let box=document.getElementById('backupText');
+   box.value=text;box.focus();box.select();
+   showToast('Backup steht im Textfeld zum Kopieren');
+ }
+}
+function applyImportedBackup(obj){
+ state=normalizeImported(obj);
+ // Home calendar should always open on current month.
+ state.homeCalYear=new Date().getFullYear();
+ state.homeCalMonth=new Date().getMonth();
+ state.calYear=new Date().getFullYear();
+ state.calMonth=new Date().getMonth();
+ persist();
+ renderAll();
+ showPage('today');
+ showToast('Backup vollständig geladen ✓');
+}
+function importBackupText(){
+ let raw=document.getElementById('backupText').value.trim();
+ if(!raw){showToast('Bitte Backup-Text einfügen');return}
+ try{
+   let obj=JSON.parse(raw);
+   if(confirm('Vorhandene App-Daten durch dieses Backup ersetzen?')){
+     applyImportedBackup(obj);
+     document.getElementById('backupText').value='';
+   }
+ }catch(e){showToast('Backup-Text ist ungültig')}
 }
 function resetData(){if(confirm('Wirklich alle lokalen Daten löschen?')){state=clone(DEFAULT);persist();renderAll();showToast('Daten zurückgesetzt')}}
 
@@ -552,20 +653,44 @@ function editEntry(date){
  weightInput.value=fmt(e.weight);entryDate.value=e.date;noteInput.value=e.note||'';entryPage.dataset.edit=date;showPage('entryPage');
 }
 function saveEntry(){
- let w=parseNum(weightInput.value),d=entryDate.value,note=noteInput.value.trim();
- if(!isFinite(w)||w<20||w>400){showToast('Bitte gültiges Gewicht eingeben');return}
+ const wEl=document.getElementById('weightInput');
+ const dEl=document.getElementById('entryDate');
+ const nEl=document.getElementById('noteInput');
+ let w=parseNum(wEl.value),d=dEl.value,note=nEl.value.trim();
+
  if(!d){showToast('Bitte Datum auswählen');return}
- let old=entryPage.dataset.edit;
+ if(!isFinite(w)||w<20||w>400){showToast('Bitte gültiges Gewicht eingeben');return}
+
+ let old=document.getElementById('entryPage').dataset.edit || '';
  if(old)state.entries=state.entries.filter(x=>x.date!==old);
+
+ // exactly one weight entry per date
  state.entries=state.entries.filter(x=>x.date!==d);
- state.entries.push({date:d,weight:w,note});
- let dt=new Date(d+'T12:00:00');
- state.homeCalYear=dt.getFullYear();state.homeCalMonth=dt.getMonth();
- state.calYear=dt.getFullYear();state.calMonth=dt.getMonth();
- persist();renderAll();showPage('today');showToast('Gewicht gespeichert');
+ state.entries.push({date:d,weight:w,note:note});
+ state.entries.sort((a,b)=>a.date.localeCompare(b.date));
+
+ persist();
+ renderAll();
+ showPage('today');
+ showToast('Gewicht gespeichert ✓');
 }
 function goBack(){showPage(lastMain||'today')}
 function showToast(t){toast.textContent=t;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800)}
+
+
+document.getElementById('backupFileInput').addEventListener('change',function(e){
+ const file=e.target.files && e.target.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=function(){
+   try{
+     const obj=JSON.parse(String(reader.result));
+     if(confirm('Vorhandene App-Daten durch dieses Backup ersetzen?'))applyImportedBackup(obj);
+   }catch(err){showToast('Backup-Datei ist ungültig')}
+   e.target.value='';
+ };
+ reader.readAsText(file);
+});
 
 renderAll();
 if('serviceWorker' in navigator){
