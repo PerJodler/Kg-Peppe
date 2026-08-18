@@ -52,11 +52,11 @@ h2{font-size:18px;margin:0}
 .stat-lbl{font-size:10px;color:var(--muted);line-height:1.25}
 .primary{width:100%;border:0;border-radius:12px;background:linear-gradient(90deg,var(--green2),#009a70);color:#fff;padding:14px 18px;font-weight:800;font-size:16px;cursor:pointer}
 .secondary{width:100%;border:1px solid var(--line);background:var(--card2);color:var(--text);border-radius:12px;padding:13px;font-weight:750;cursor:pointer}
-.bottomnav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;background:rgba(35,38,40,.97);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:7px 7px max(9px,env(safe-area-inset-bottom));z-index:50;backdrop-filter:blur(18px)}
+.bottomnav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;background:rgba(35,38,40,.97);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:7px 7px max(9px,env(safe-area-inset-bottom));z-index:50;backdrop-filter:blur(18px)}
 .navbtn{border:0;background:transparent;color:#c0c4c7;font-size:10px;padding:4px 2px;cursor:pointer}
 .navbtn .ni{display:block;font-size:20px;margin-bottom:3px}
 .navbtn.active{color:#18d3a0;font-weight:800}
-.segment{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:#373b3e;border-radius:10px;padding:3px;margin-bottom:15px}
+.segment{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:#373b3e;border-radius:10px;padding:3px;margin-bottom:15px}
 .segment button{border:0;background:transparent;border-radius:8px;padding:8px 3px;font-size:11px;color:#d0d3d6;cursor:pointer}
 .segment button.active{background:#164d42;color:#35e6b6;font-weight:800}
 .chartbox{height:250px;position:relative;margin:5px 0}
@@ -85,6 +85,9 @@ h2{font-size:18px;margin:0}
 .daybox.p75{background:rgba(84,191,36,.44);border-color:#66d334;color:#fff}
 .daybox.p97{background:rgba(56,255,20,.55);border-color:#38ff14;color:#fff;box-shadow:0 0 10px rgba(56,255,20,.16)}
 .daybox.selected{outline:2px solid #fff;outline-offset:1px}
+.daybox.milestone{position:relative;box-shadow:inset 0 0 0 2px #c09cff}
+.daybox.milestone:after{content:"ZIEL";position:absolute;right:3px;top:3px;font-size:7px;font-weight:900;color:#eadfff}
+.daybox .goalw{font-size:8px;margin-top:2px;color:#eadfff}
 .legend{display:flex;justify-content:space-between;gap:5px;flex-wrap:wrap;margin-top:12px}
 .legend span{font-size:10px;color:#d6d9dc;white-space:nowrap}
 .legend i{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:0}
@@ -148,7 +151,11 @@ h2{font-size:18px;margin:0}
       <div class="weight"><span id="currentWeight">82,4</span> <small>kg</small></div>
       <div class="delta" id="dayDelta">↓ 0,3 kg</div>
       <div class="micro" style="color:#fff;margin-top:5px">seit letztem Eintrag</div>
-      <svg viewBox="0 0 150 70" aria-hidden="true"><polyline id="miniLine" fill="none" stroke="rgba(255,255,255,.96)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="5,58 20,43 35,47 50,30 65,23 80,34 95,29 110,15 125,20 142,12"/><circle id="miniDot" cx="142" cy="12" r="5" fill="#fff"/></svg>
+      <div id="heroTarget" style="position:absolute;right:16px;top:25px;width:158px;text-align:right">
+        <div style="font-size:12px;opacity:.9" id="heroTargetLabel">Idealziel</div>
+        <div style="font-size:25px;font-weight:800;margin-top:6px" id="heroTargetDiff">---</div>
+        <div style="font-size:12px;margin-top:5px;opacity:.95" id="heroTargetDays">Differenz zum Idealziel</div>
+      </div>
     </div>
 
     <div class="card calendar-card">
@@ -170,23 +177,17 @@ h2{font-size:18px;margin:0}
     <div class="card">
       <div class="row"><div><div class="metric-title">7-Tage-Durchschnitt</div><div class="metric-value"><span id="avg7">82,7</span> <small>kg</small></div></div><div class="green" style="text-align:right;font-weight:750"><span id="trend7">↓ 0,4 kg</span><div class="micro">seit 7 Tagen</div></div></div>
     </div>
+    <div class="card">
+      <div class="row"><b>Wochenbericht</b><span class="micro">letzte 7 Einträge</span></div>
+      <div id="weeklyReport"></div>
+    </div>
 
     <div class="card">
-      <div class="row"><b style="font-size:13px">Zielgewicht</b><b style="font-size:13px"><span id="goalWeight">78,0</span> kg</b></div>
+      <div class="row"><b style="font-size:13px">Idealziel</b><b style="font-size:13px"><span id="goalWeight">78,0</span> kg</b></div>
       <div class="progress"><i id="goalProgress" style="width:55%"></i></div>
       <div class="row micro"><span>Noch <span id="remaining">4,4</span> kg bis zum Ziel</span><span id="goalPct">55 %</span></div>
     </div>
-
-    <div class="card">
-      <b style="font-size:13px">Dein Fortschritt</b>
-      <div class="stats4" style="margin-top:10px">
-        <div><div class="stat-icon">🔥</div><div class="stat-num" id="streak">23</div><div class="stat-lbl">Tage in Folge</div></div>
-        <div><div class="stat-icon">📊</div><div class="stat-num" id="lost30">-1,8 kg</div><div class="stat-lbl">letzte 30 Tage</div></div>
-        <div><div class="stat-icon">🏆</div><div class="stat-num"><span id="remaining2">4,4</span> kg</div><div class="stat-lbl">bis zum Ziel</div></div>
-        <div><div class="stat-icon">🗓️</div><div class="stat-num" id="entryCount">30</div><div class="stat-lbl">Einträge</div></div>
-      </div>
-    </div>
-    <button class="primary" onclick="openEntry()">＋ Gewicht eintragen</button>
+<button class="primary" onclick="openEntry()">＋ Gewicht eintragen</button>
   </section>
 
   <section id="trend" class="page">
@@ -211,33 +212,6 @@ h2{font-size:18px;margin:0}
     <div id="entriesList"></div>
   </section>
 
-  <section id="progressPage" class="page">
-    <div class="header"><div><h1>Fortschritt</h1></div></div>
-    <div class="banner"><h3>Du machst das großartig! 💪</h3><p><span id="bannerLoss">-1,8 kg</span> in den letzten 30 Tagen.</p><p>Weiter so!</p></div>
-
-    <div class="card">
-      <div class="row"><b>Kalender</b><button class="iconbtn" onclick="shiftMonth(1)">›</button></div>
-      <div class="calendar-head"><button class="iconbtn" onclick="shiftMonth(-1)">‹</button><b id="calTitle">Mai 2024</b><span style="width:28px"></span></div>
-      <div class="calendar" id="calendar"></div>
-      <div class="micro" style="margin-top:12px">Farben zeigen die Nähe zum Zielgewicht.</div>
-    </div>
-
-    <div class="card">
-      <div class="row"><b>Körpermaße</b><button class="iconbtn" onclick="openMeasurements()">✎</button></div>
-      <div id="measurements"></div>
-    </div>
-
-    <div class="card">
-      <div class="row"><b>Fortschrittsfotos</b><span class="micro">nur auf diesem Gerät</span></div>
-      <div class="photos" id="photos" style="margin-top:12px"></div>
-    </div>
-
-    <div class="card">
-      <div class="row"><b>Wochenbericht</b><span class="micro">letzte 7 Einträge</span></div>
-      <div id="weeklyReport"></div>
-    </div>
-  </section>
-
   <section id="more" class="page">
     <div class="header"><div><h1>Mehr</h1></div></div>
     <div class="card">
@@ -247,6 +221,16 @@ h2{font-size:18px;margin:0}
       <div class="settings-row"><span>Alle lokalen Daten löschen</span><button class="secondary" style="width:auto;padding:8px 12px;color:#ff756d" onclick="resetData()">Löschen</button></div>
     </div>
     <button class="primary" onclick="saveSettings()">Einstellungen speichern</button>
+
+    <div class="card">
+      <div class="row"><b>Zwischenziel</b><span class="micro">optional</span></div>
+      <div class="field"><label>Datum</label><input id="milestoneDate" type="date"></div>
+      <div class="field"><label>Gewicht (kg)</label><input id="milestoneWeight" inputmode="decimal" placeholder="z. B. 80,0"></div>
+      <div class="row">
+        <button class="secondary" onclick="clearMilestone()">Entfernen</button>
+        <button class="primary" style="width:58%" onclick="saveMilestone()">Speichern</button>
+      </div>
+    </div>
   </section>
 
   <section id="entryPage" class="page">
@@ -261,7 +245,6 @@ h2{font-size:18px;margin:0}
     <button class="navbtn active" data-page="today"><span class="ni">⌂</span>Heute</button>
     <button class="navbtn" data-page="trend"><span class="ni">⌁</span>Verlauf</button>
     <button class="navbtn" data-page="entries"><span class="ni">▤</span>Einträge</button>
-    <button class="navbtn" data-page="progressPage"><span class="ni">↗</span>Fortschritt</button>
     <button class="navbtn" data-page="more"><span class="ni">•••</span>Mehr</button>
   </nav>
 </div>
@@ -281,12 +264,13 @@ h2{font-size:18px;margin:0}
 <div class="toast" id="toast"></div>
 
 <script>
-const KEY='gewichtTrackerV5Dark';
+const KEY='gewichtTrackerV6Milestone';
 const DEFAULT={
  goal:78,start:84.2,
  entries:[],
  measurements:{bauch:89,huefte:102,brust:98,bein:58},
  photos:[],
+ milestone:{date:'',weight:null},
  calYear:new Date().getFullYear(),calMonth:new Date().getMonth(),
  homeCalYear:new Date().getFullYear(),homeCalMonth:new Date().getMonth()
 };
@@ -327,11 +311,39 @@ function progressClass(weight){
   return 'p97';
 }
 
+function milestoneActive(){
+ return !!(state.milestone && state.milestone.date && state.milestone.weight !== null && isFinite(Number(state.milestone.weight)));
+}
+function daysUntil(dateStr){
+ if(!dateStr)return null;
+ let a=new Date();a.setHours(0,0,0,0);
+ let b=new Date(dateStr+'T12:00:00');b.setHours(0,0,0,0);
+ return Math.round((b-a)/86400000);
+}
+function renderHeroTarget(){
+ let l=latest();
+ if(milestoneActive()){
+   let target=Number(state.milestone.weight);
+   let diff=l ? l.weight-target : null;
+   heroTargetLabel.textContent='Zwischenziel · '+new Date(state.milestone.date+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});
+   heroTargetDiff.textContent=diff===null?'---':fmt(Math.abs(diff))+' kg';
+   let d=daysUntil(state.milestone.date);
+   heroTargetDays.textContent=d>=0 ? d+' Tage verbleibend' : Math.abs(d)+' Tage überschritten';
+ }else{
+   let diff=l ? l.weight-state.goal : null;
+   heroTargetLabel.textContent='Idealziel · '+fmt(state.goal)+' kg';
+   heroTargetDiff.textContent=diff===null?'---':fmt(Math.abs(diff))+' kg';
+   heroTargetDays.textContent='Differenz zum Idealziel';
+ }
+}
+
+
 function renderAll(){
- renderDashboard(); renderHomeCalendar(); renderChart(); renderEntries(); renderCalendar(); renderMeasurements(); renderPhotos(); renderWeekly(); renderSettings();
+ renderDashboard(); renderHomeCalendar(); renderChart(); renderEntries(); renderWeekly(); renderSettings();
 }
 
 function renderDashboard(){
+ renderHeroTarget();
  let a=sorted(), l=latest(), p=prior();
 
  if(!l){
@@ -345,9 +357,6 @@ function renderDashboard(){
    goalPct.textContent='0 %';
    goalProgress.style.width='0%';
    lost30.textContent='0,0 kg';
-   bannerLoss.textContent='0,0 kg';
-   entryCount.textContent='0';
-   streak.textContent='0';
    return;
  }
 
@@ -367,9 +376,6 @@ function renderDashboard(){
  let base=a.find(x=>new Date(x.date+'T12:00:00')>=cutoff) || a[0];
  let d30=l.weight-base.weight;
  lost30.textContent=(d30>0?'+':'')+fmt(d30)+' kg';
- bannerLoss.textContent=(d30>0?'+':'')+fmt(d30)+' kg';
- entryCount.textContent=a.length;
- streak.textContent=calcStreak(a);
 }
 
 function calcStreak(a){
@@ -394,7 +400,8 @@ function buildCalendarHTML(y,m,interactive=true){
    let e=entryMap.get(iso);
    let cls=e?progressClass(e.weight):'empty';
    let current = todayISO()===iso ? 'selected':'';
-   html+=`<div class="daybox ${dim?'dim':''} ${cls} ${current}" ${interactive?`onclick="calendarDay('${iso}')"`:''}><span>${day}</span>${e?`<span class="wgt">${fmt(e.weight)}</span>`:''}</div>`;
+   let ms=milestoneActive() && state.milestone.date===iso;
+   html+=`<div class="daybox ${dim?'dim':''} ${cls} ${current} ${ms?'milestone':''}" ${interactive?`onclick="calendarDay('${iso}')"`:''}><span>${day}</span>${e?`<span class="wgt">${fmt(e.weight)}</span>`:''}${ms?`<span class="goalw">${fmt(state.milestone.weight)} kg</span>`:''}</div>`;
  }
  return html;
 }
@@ -497,7 +504,25 @@ function renderWeekly(){
  </div><p class="report-note">${note}</p>`;
 }
 
-function renderSettings(){goalInput.value=fmt(state.goal);startInput.value=fmt(state.start)}
+function renderSettings(){
+ goalInput.value=fmt(state.goal);startInput.value=fmt(state.start);
+ if(document.getElementById('milestoneDate')){
+   milestoneDate.value=(state.milestone&&state.milestone.date)||'';
+   milestoneWeight.value=(state.milestone&&state.milestone.weight!==null)?fmt(state.milestone.weight):'';
+ }
+}
+function saveMilestone(){
+ let d=milestoneDate.value,w=parseNum(milestoneWeight.value);
+ if(!d||!isFinite(w)||w<20||w>400){showToast('Bitte Datum und gültiges Zwischenziel eingeben');return}
+ state.milestone={date:d,weight:w};
+ let dt=new Date(d+'T12:00:00');
+ state.homeCalYear=dt.getFullYear();state.homeCalMonth=dt.getMonth();
+ persist();renderAll();showToast('Zwischenziel gespeichert');
+}
+function clearMilestone(){
+ state.milestone={date:'',weight:null};
+ persist();renderAll();showToast('Zwischenziel entfernt');
+}
 function saveSettings(){
  let g=parseNum(goalInput.value),s=parseNum(startInput.value);
  if(!isFinite(g)||!isFinite(s)||g<=0||s<=0||Math.abs(s-g)<0.1){showToast('Bitte gültige Werte eingeben');return}
