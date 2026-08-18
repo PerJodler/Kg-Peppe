@@ -82,8 +82,8 @@ h2{font-size:18px;margin:0}
 .daybox.p0{background:rgba(255,66,55,.36);border-color:#ff4237;color:#fff}
 .daybox.p25{background:rgba(255,122,0,.37);border-color:#ff8a19;color:#fff}
 .daybox.p50{background:rgba(255,196,0,.42);border-color:#ffc400;color:#fff}
-.daybox.p75{background:rgba(84,191,36,.44);border-color:#66d334;color:#fff}
-.daybox.p97{background:rgba(56,255,20,.55);border-color:#38ff14;color:#fff;box-shadow:0 0 10px rgba(56,255,20,.16)}
+.daybox.p75{background:rgba(144,238,144,.48);border-color:#90ee90;color:#fff}
+.daybox.p97{background:rgba(196,72,255,.58);border-color:#d35cff;color:#fff;box-shadow:0 0 12px rgba(211,92,255,.38)}
 .daybox.selected{outline:2px solid #fff;outline-offset:1px}
 .daybox.milestone{position:relative;box-shadow:inset 0 0 0 2px #c09cff}
 .daybox.milestone:after{content:"ZIEL";position:absolute;right:3px;top:3px;font-size:7px;font-weight:900;color:#eadfff}
@@ -167,8 +167,8 @@ h2{font-size:18px;margin:0}
         <span><i style="background:#ff4237"></i>0–24%</span>
         <span><i style="background:#ff7a00"></i>25–49%</span>
         <span><i style="background:#ffc400"></i>50–74%</span>
-        <span><i style="background:#54bf24"></i>75–96%</span>
-        <span><i style="background:#38ff14"></i>97–100%</span>
+        <span><i style="background:#90ee90"></i>75–89%</span>
+        <span><i style="background:#d35cff"></i>90–100%</span>
       </div>
     </div>
 
@@ -318,7 +318,7 @@ function progressClass(weight){
   if(p<25)return 'p0';
   if(p<50)return 'p25';
   if(p<75)return 'p50';
-  if(p<97)return 'p75';
+  if(p<90)return 'p75';
   return 'p97';
 }
 
