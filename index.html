@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#242628">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Kg – Gewicht Tracker V7</title>
+<title>Kg – Gewicht Tracker V8</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-title" content="Kg">
@@ -26,7 +26,7 @@ button,input,textarea{font:inherit}
 .status{height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-weight:750;font-size:14px}
 .page{display:none;padding:8px 18px 20px}
 .page.active{display:block}
-.header{display:flex;justify-content:space-between;align-items:flex-start;margin:8px 0 18px}
+.header{display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 18px}
 h1{font-size:24px;margin:0 0 4px;letter-spacing:-.5px}
 h2{font-size:18px;margin:0}
 .sub{font-size:14px;color:var(--muted)}
@@ -46,17 +46,17 @@ h2{font-size:18px;margin:0}
 .progress{height:7px;background:#505458;border-radius:999px;overflow:hidden;margin:13px 0 8px}
 .progress>i{height:100%;display:block;background:linear-gradient(90deg,var(--green2),#00d191);border-radius:999px}
 .micro{font-size:12px;color:var(--muted)}
-.stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.stats4{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}
 .stat-icon{font-size:22px;margin:4px 0 7px}
 .stat-num{font-size:17px;font-weight:800}
 .stat-lbl{font-size:10px;color:var(--muted);line-height:1.25}
 .primary{width:100%;border:0;border-radius:12px;background:linear-gradient(90deg,var(--green2),#009a70);color:#fff;padding:14px 18px;font-weight:800;font-size:16px;cursor:pointer}
 .secondary{width:100%;border:1px solid var(--line);background:var(--card2);color:var(--text);border-radius:12px;padding:13px;font-weight:750;cursor:pointer}
-.bottomnav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;background:rgba(35,38,40,.97);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:7px 7px max(9px,env(safe-area-inset-bottom));z-index:50;backdrop-filter:blur(18px)}
+.bottomnav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;background:rgba(35,38,40,.97);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding:7px 7px max(9px,env(safe-area-inset-bottom));z-index:50;backdrop-filter:blur(18px)}
 .navbtn{border:0;background:transparent;color:#c0c4c7;font-size:10px;padding:4px 2px;cursor:pointer}
 .navbtn .ni{display:block;font-size:20px;margin-bottom:3px}
 .navbtn.active{color:#18d3a0;font-weight:800}
-.segment{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:#373b3e;border-radius:10px;padding:3px;margin-bottom:15px}
+.segment{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#373b3e;border-radius:10px;padding:3px;margin-bottom:15px}
 .segment button{border:0;background:transparent;border-radius:8px;padding:8px 3px;font-size:11px;color:#d0d3d6;cursor:pointer}
 .segment button.active{background:#164d42;color:#35e6b6;font-weight:800}
 .chartbox{height:250px;position:relative;margin:5px 0}
@@ -138,9 +138,7 @@ h2{font-size:18px;margin:0}
 </head>
 <body>
 <div class="app">
-  <div class="status"><span>9:41</span><span>▮▮▮ ))) ▰</span></div>
-
-  <section id="today" class="page active">
+<section id="today" class="page active">
     <div class="header">
       <div><h1>Guten Morgen! ☀️</h1><div class="sub">Schön, dass du dranbleibst.</div></div>
       <button class="iconbtn" onclick="showToast('Erinnerungen kommen als nächstes')">♧</button>
@@ -175,39 +173,31 @@ h2{font-size:18px;margin:0}
     </div>
 
     <div class="card">
-      <div class="metric-title">7-Tage-Veränderung</div>
-      <div class="metric-value"><span id="trend7">---</span></div>
-      <div class="micro" style="margin-top:4px">Differenz innerhalb der letzten 7 Einträge</div>
-    </div>
-    <div class="card">
-      <div class="row"><b>Wochenbericht</b><span class="micro">letzte 7 Einträge</span></div>
-      <div id="weeklyReport"></div>
-    </div>
-
-    <div class="card">
       <div class="row"><b style="font-size:13px">Idealziel</b><b style="font-size:13px"><span id="goalWeight">78,0</span> kg</b></div>
       <div class="progress"><i id="goalProgress" style="width:55%"></i></div>
       <div class="row micro"><span>Noch <span id="remaining">4,4</span> kg bis zum Ziel</span><span id="goalPct">55 %</span></div>
     </div>
-<button class="primary" onclick="openEntry()">＋ Gewicht eintragen</button>
-  </section>
 
-  <section id="trend" class="page">
-    <div class="header"><div><h1>Verlauf</h1></div><button class="iconbtn">⌁</button></div>
-    <div class="segment" id="rangeSeg">
+    <div class="card" style="margin-top:12px">
+      <div class="row" style="margin-bottom:12px"><b>Verlauf</b><span class="micro">Gewichtsentwicklung</span></div>
+      <div class="segment" id="rangeSeg">
       <button class="active" data-days="7">Woche</button><button data-days="30">Monat</button><button data-days="90">3 Monate</button><button data-days="365">Jahr</button><button data-days="9999">Alle</button>
     </div>
-    <div class="chartbox"><svg id="chart" viewBox="0 0 360 250"></svg></div>
-    <div class="chartstats">
+      <div class="chartbox"><svg id="chart" viewBox="0 0 360 250"></svg></div>
+      <div class="chartstats">
       <div class="card"><div class="micro">Tiefster Wert</div><div class="metric-value" style="font-size:20px"><span id="minWeight">81,7</span> <small>kg</small></div></div>
       <div class="card"><div class="micro">Höchster Wert</div><div class="metric-value" style="font-size:20px"><span id="maxWeight">84,3</span> <small>kg</small></div></div>
       <div class="card"><div class="micro">Durchschnitt</div><div class="metric-value" style="font-size:20px"><span id="rangeAvg">82,7</span> <small>kg</small></div></div>
     </div>
-    <div class="card" style="margin-top:12px">
-      <b>Gewichtsverlauf</b>
-      <div class="row" style="margin-top:13px"><div><div class="green" style="font-size:20px;font-weight:800" id="rangeChange">↓ -1,8 kg</div><div class="micro">im Zeitraum</div></div><div><div class="green" style="font-size:18px;font-weight:800" id="weeklyTrend">↓ -0,4 kg/Woche</div><div class="micro">durchschnittlicher Trend</div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="row"><b>Monatsbericht</b><span class="micro">aktueller Monat</span></div>
+      <div id="weeklyReport"></div>
     </div>
   </section>
+
+  
 
   <section id="entries" class="page">
     <div class="header"><div><h1>Einträge</h1></div><button class="iconbtn" onclick="openEntry()">＋</button></div>
@@ -216,6 +206,18 @@ h2{font-size:18px;margin:0}
 
   <section id="more" class="page">
     <div class="header"><div><h1>Mehr</h1></div></div>
+
+
+    <div class="card">
+      <div class="row"><b>Zwischenziel</b><span class="micro">optional</span></div>
+      <div class="field"><label>Datum</label><input id="milestoneDate" type="date"></div>
+      <div class="field"><label>Gewicht (kg)</label><input id="milestoneWeight" inputmode="decimal" placeholder="z. B. 80,0"></div>
+      <div class="row">
+        <button class="secondary" onclick="clearMilestone()">Entfernen</button>
+        <button class="primary" style="width:58%" onclick="saveMilestone()">Speichern</button>
+      </div>
+    </div>
+
     <div class="card">
       <div class="settings-row"><span>Zielgewicht</span><div><input id="goalInput" inputmode="decimal" value="78,0"> kg</div></div>
       <div class="settings-row"><span>Startgewicht</span><div><input id="startInput" inputmode="decimal" value="84,2"> kg</div></div>
@@ -237,16 +239,6 @@ h2{font-size:18px;margin:0}
       <button class="primary" onclick="importBackupText()">Backup laden</button>
     </div>
 
-    <div class="card">
-      <div class="row"><b>Zwischenziel</b><span class="micro">optional</span></div>
-      <div class="field"><label>Datum</label><input id="milestoneDate" type="date"></div>
-      <div class="field"><label>Gewicht (kg)</label><input id="milestoneWeight" inputmode="decimal" placeholder="z. B. 80,0"></div>
-      <div class="row">
-        <button class="secondary" onclick="clearMilestone()">Entfernen</button>
-        <button class="primary" style="width:58%" onclick="saveMilestone()">Speichern</button>
-      </div>
-    </div>
-
     <div style="text-align:center;color:#aeb4b8;font-size:11px;line-height:1.5;padding:10px 12px 4px">
       Copyright © 2026 Peppe Mobilia.<br>Alle Rechte vorbehalten.
     </div>
@@ -262,7 +254,6 @@ h2{font-size:18px;margin:0}
 
   <nav class="bottomnav" id="bottomnav">
     <button class="navbtn active" data-page="today"><span class="ni">⌂</span>Heute</button>
-    <button class="navbtn" data-page="trend"><span class="ni">⌁</span>Verlauf</button>
     <button class="navbtn" data-page="entries"><span class="ni">▤</span>Einträge</button>
     <button class="navbtn" data-page="more"><span class="ni">•••</span>Mehr</button>
   </nav>
@@ -284,7 +275,7 @@ h2{font-size:18px;margin:0}
 <div class="toast" id="toast"></div>
 
 <script>
-const KEY='gewichtTrackerV7Backup';
+const KEY='gewichtTrackerV8Compact';
 const DEFAULT={
  goal:78,start:84.2,
  entries:[],
@@ -369,7 +360,6 @@ function renderDashboard(){
  if(!l){
    currentWeight.textContent='---';
    dayDelta.textContent='↓ ---';
-   trend7.textContent='---';
    goalWeight.textContent=fmt(state.goal);
    remaining.textContent='---';
    goalPct.textContent='0 %';
@@ -380,14 +370,7 @@ function renderDashboard(){
  currentWeight.textContent=fmt(l.weight);
  let dd=p?l.weight-p.weight:0;
  dayDelta.textContent=`${changeSign(dd)} ${fmt(Math.abs(dd))} kg`;
-
- // Only show the difference across the latest 7 entries.
- let recent=a.slice(-7);
- let weekDelta=recent.length>1 ? recent[recent.length-1].weight-recent[0].weight : 0;
- trend7.textContent=`${changeSign(weekDelta)} ${weekDelta>0?'+':''}${fmt(weekDelta)} kg`;
- trend7.className=colorClass(weekDelta);
-
- goalWeight.textContent=fmt(state.goal);
+goalWeight.textContent=fmt(state.goal);
  let rem=Math.max(0,l.weight-state.goal);
  let total=Math.max(.1,state.start-state.goal);
  let done=Math.max(0,state.start-l.weight);
@@ -441,7 +424,13 @@ function shiftHomeMonth(d){
 function rangeEntries(){let a=sorted();if(chartDays===9999)return a;return a.slice(-Math.min(chartDays,a.length))}
 function renderChart(){
  let a=rangeEntries(), svg=chart;
- if(!a.length){svg.innerHTML='';return}
+ if(!a.length){
+   svg.innerHTML='<text x="180" y="125" text-anchor="middle" class="axistext">Noch keine Gewichtseinträge</text>';
+   minWeight.textContent='---';
+   maxWeight.textContent='---';
+   rangeAvg.textContent='---';
+   return;
+ }
  let vals=a.map(x=>x.weight), min=Math.floor(Math.min(...vals)-1), max=Math.ceil(Math.max(...vals)+1);
  if(max-min<3)max=min+3;
  let W=360,H=250,L=32,R=8,T=10,B=32, iw=W-L-R, ih=H-T-B;
@@ -459,9 +448,6 @@ function renderChart(){
  minWeight.textContent=fmt(Math.min(...vals));
  maxWeight.textContent=fmt(Math.max(...vals));
  rangeAvg.textContent=fmt(mean(vals));
- let c=vals[vals.length-1]-vals[0], weeks=Math.max(1,(a.length-1)/7), wt=c/weeks;
- rangeChange.textContent=`${changeSign(c)} ${c>0?'+':''}${fmt(c)} kg`;rangeChange.className=colorClass(c);
- weeklyTrend.textContent=`${changeSign(wt)} ${wt>0?'+':''}${fmt(wt)} kg/Woche`;weeklyTrend.className=colorClass(wt);
 }
 document.querySelectorAll('#rangeSeg button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#rangeSeg button').forEach(x=>x.classList.remove('active'));b.classList.add('active');chartDays=+b.dataset.days;renderChart()});
 
@@ -516,20 +502,32 @@ function removePhoto(i){if(confirm('Dieses Fortschrittsfoto löschen?')){state.p
 function renderWeekly(){
  let box=document.getElementById('weeklyReport');
  if(!box)return;
- let a=sorted().slice(-7);
- if(!a.length){box.innerHTML='<div class="emptymsg">Noch nicht genug Daten.</div>';return}
+
+ let now=new Date();
+ let y=now.getFullYear(),m=now.getMonth();
+ let a=sorted().filter(e=>{
+   let d=new Date(e.date+'T12:00:00');
+   return d.getFullYear()===y && d.getMonth()===m;
+ });
+
+ if(!a.length){
+   box.innerHTML='<div class="emptymsg">Für diesen Monat gibt es noch keine Gewichtseinträge.</div>';
+   return;
+ }
+
  let avg=mean(a.map(x=>x.weight));
- let change=a[a.length-1].weight-a[0].weight;
+ let change=a.length>1?a[a.length-1].weight-a[0].weight:0;
  let days=new Set(a.map(x=>x.date)).size;
  let note=change<-.2
-   ?'Dein Trend zeigt in die gewünschte Richtung. Tägliche Schwankungen sind normal.'
+   ?'Dein Monatstrend zeigt in die gewünschte Richtung. Einzelne Schwankungen sind normal.'
    :change>.2
-     ?'Diese Woche liegt der Trend etwas höher. Beobachte vor allem den Durchschnitt.'
-     :'Dein Gewicht war diese Woche relativ stabil.';
+     ?'Der Monatstrend liegt aktuell etwas höher. Entscheidend ist die Entwicklung über mehrere Messungen.'
+     :'Dein Gewicht ist in diesem Monat bisher relativ stabil.';
+
  box.innerHTML=`<div class="report-grid">
   <div class="report-metric"><span class="micro">Ø Gewicht</span><b>${fmt(avg)} kg</b></div>
   <div class="report-metric"><span class="micro">Veränderung</span><b class="${colorClass(change)}">${change>0?'+':''}${fmt(change)} kg</b></div>
-  <div class="report-metric"><span class="micro">Wiegetage</span><b>${days}/7</b></div>
+  <div class="report-metric"><span class="micro">Wiegetage</span><b>${days}</b></div>
   <div class="report-metric"><span class="micro">Aktuelles Ziel</span><b>${fmt(state.goal)} kg</b></div>
  </div><p class="report-note">${note}</p>`;
 }
@@ -642,7 +640,7 @@ function showPage(id){
  bottomnav.style.display=id==='entryPage'?'none':'grid';
  if(id!=='entryPage')lastMain=id;
  window.scrollTo(0,0);
- if(id==='trend')renderChart();
+
 }
 document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 function openEntry(date){
