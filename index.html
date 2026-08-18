@@ -27,7 +27,6 @@ button,input,textarea{font:inherit}
 .page{display:none;padding:8px 18px 20px}
 .page.active{display:block}
 .header{display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 18px}
-.today-spacer{height:32px}
 h1{font-size:24px;margin:0 0 4px;letter-spacing:-.5px}
 h2{font-size:18px;margin:0}
 .sub{font-size:14px;color:var(--muted)}
@@ -38,6 +37,9 @@ h2{font-size:18px;margin:0}
 .goal-card .micro{color:rgba(255,255,255,.92)}
 .goal-card .progress{background:rgba(255,255,255,.28)}
 .goal-card .progress>i{background:#fff}
+.report-card{background:linear-gradient(135deg,var(--green2),#008c67);color:#fff;border:0}
+.report-card .micro,.report-card .report-note{color:rgba(255,255,255,.92)}
+.report-card .report-metric{background:rgba(255,255,255,.16)}
 .hero .label{font-size:13px;font-weight:700}
 .hero .weight{font-size:42px;font-weight:800;letter-spacing:-1.4px;margin:7px 0 2px}
 .hero .weight small{font-size:17px}
@@ -56,6 +58,7 @@ h2{font-size:18px;margin:0}
 .stat-num{font-size:17px;font-weight:800}
 .stat-lbl{font-size:10px;color:var(--muted);line-height:1.25}
 .primary{width:100%;border:0;border-radius:12px;background:linear-gradient(90deg,var(--green2),#009a70);color:#fff;padding:14px 18px;font-weight:800;font-size:16px;cursor:pointer}
+.settings-save{margin-bottom:12px}
 .secondary{width:100%;border:1px solid var(--line);background:var(--card2);color:var(--text);border-radius:12px;padding:13px;font-weight:750;cursor:pointer}
 .bottomnav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;background:rgba(35,38,40,.97);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding:7px 7px max(9px,env(safe-area-inset-bottom));z-index:50;backdrop-filter:blur(18px)}
 .navbtn{border:0;background:transparent;color:#c0c4c7;font-size:10px;padding:4px 2px;cursor:pointer}
@@ -144,8 +147,6 @@ h2{font-size:18px;margin:0}
 <body>
 <div class="app">
 <section id="today" class="page active">
-    <div class="today-spacer" aria-hidden="true"></div>
-
     <div class="card hero">
       <div class="label">Aktuelles Gewicht</div>
       <div class="weight"><span id="currentWeight">82,4</span> <small>kg</small></div>
@@ -193,7 +194,7 @@ h2{font-size:18px;margin:0}
     </div>
     </div>
 
-    <div class="card">
+    <div class="card report-card">
       <div class="row"><b>Monatsbericht</b><span class="micro">aktueller Monat</span></div>
       <div id="weeklyReport"></div>
     </div>
@@ -227,7 +228,7 @@ h2{font-size:18px;margin:0}
       <div class="settings-row"><span>Backup-Datei laden</span><button class="secondary" style="width:auto;padding:8px 12px" onclick="backupFileInput.click()">Import</button></div>
       <div class="settings-row"><span>Alle lokalen Daten löschen</span><button class="secondary" style="width:auto;padding:8px 12px;color:#ff756d" onclick="resetData()">Löschen</button></div>
     </div>
-    <button class="primary" onclick="saveSettings()">Einstellungen speichern</button>
+    <button class="primary settings-save" onclick="saveSettings()">Einstellungen speichern</button>
 
 
     <div class="card">
