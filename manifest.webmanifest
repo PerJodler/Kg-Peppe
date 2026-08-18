@@ -1,10 +1,10 @@
 {
-  "name": "Kg – Gewicht Tracker",
-  "short_name": "Kg",
+  "name": "KG – Gewicht Tracker",
+  "short_name": "KG",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#2c2f31",
-  "theme_color": "#242628",
+  "background_color": "#dc8a3d",
+  "theme_color": "#dc8a3d",
   "icons": [
     {
       "src": "icon-192.png",

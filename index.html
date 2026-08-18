@@ -3,23 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#242628">
+<meta name="theme-color" content="#dc8a3d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Kg – Gewicht Tracker V8</title>
+<title>KG – Gewicht Tracker</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
-<meta name="apple-mobile-web-app-title" content="Kg">
+<meta name="apple-mobile-web-app-title" content="KG">
 
 <style>
 :root{
   --green:#0aa57d; --green2:#2fc29e; --neon:#38ff14;
-  --bg:#2c2f31; --panel:#242729; --card:#2a2d2f; --card2:#313538;
+  --bg:#dc8a3d; --panel:#242729; --card:#2a2d2f; --card2:#313538;
   --text:#f7f8f9; --muted:#b9bec3; --line:#50565a; --red:#ff4237; --orange:#ff7a00;
   --yellow:#ffc400; --good:#54bf24; --blue:#4a91ff; --shadow:0 10px 28px rgba(0,0,0,.18);
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:#1f2224;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif;color:var(--text)}
+html,body{margin:0;background:#dc8a3d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif;color:var(--text)}
 body{display:flex;justify-content:center}
 button,input,textarea{font:inherit}
 .app{width:100%;max-width:430px;min-height:100dvh;background:var(--bg);position:relative;padding-bottom:86px}
@@ -27,6 +27,7 @@ button,input,textarea{font:inherit}
 .page{display:none;padding:8px 18px 20px}
 .page.active{display:block}
 .header{display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 18px}
+.today-spacer{height:64px}
 h1{font-size:24px;margin:0 0 4px;letter-spacing:-.5px}
 h2{font-size:18px;margin:0}
 .sub{font-size:14px;color:var(--muted)}
@@ -139,10 +140,7 @@ h2{font-size:18px;margin:0}
 <body>
 <div class="app">
 <section id="today" class="page active">
-    <div class="header">
-      <div><h1>Guten Morgen! ☀️</h1><div class="sub">Schön, dass du dranbleibst.</div></div>
-      <button class="iconbtn" onclick="showToast('Erinnerungen kommen als nächstes')">♧</button>
-    </div>
+    <div class="today-spacer" aria-hidden="true"></div>
 
     <div class="card hero">
       <div class="label">Aktuelles Gewicht</div>
